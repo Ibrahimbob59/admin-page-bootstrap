@@ -1,0 +1,61 @@
+/* ===== CORE VARIABLES ===== */
+:root {
+    --primary: #4361ee;
+    --secondary: #6c757d;
+    --success: #2e7d32;
+    --info: #0288d1;
+    --warning: #ed6c02;
+    --danger: #d32f2f;
+    --light: #f8f9fa;
+    --dark: #212529;
+    --sidebar-width: 280px;
+    --sidebar-collapsed: 80px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* ===== BASE LAYOUT ===== */
+  .sidebar {
+    position: fixed;
+    width: var(--sidebar-width);
+    height: 100vh;
+    background: linear-gradient(180deg, #2b2d42 0%, #1a1a2e 100%);
+    color: white;
+    transition: var(--transition);
+    z-index: 1000;
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .main-content {
+    margin-left: var(--sidebar-width);
+    min-height: 100vh;
+    transition: var(--transition);
+    background-color: #f5f7fb;
+  }
+  
+  /* ===== CARD STYLES ===== */
+  .card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: var(--transition);
+    margin-bottom: 1.5rem;
+  }
+  
+  .card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* ===== RESPONSIVE ADJUSTMENTS ===== */
+  @media (max-width: 992px) {
+    .sidebar {
+      width: var(--sidebar-collapsed);
+    }
+    .sidebar .nav-link span,
+    .sidebar .sidebar-brand span {
+      display: none;
+    }
+    .main-content {
+      margin-left: var(--sidebar-collapsed);
+    }
+  }

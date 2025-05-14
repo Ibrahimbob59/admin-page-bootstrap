@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/admin.css">
+  <style>
+    .stat-card {
+      border-left: 4px solid;
+      transition: var(--transition);
+      height: 100%;
+    }
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    .stat-card.primary { border-left-color: var(--primary); }
+    .stat-card.success { border-left-color: var(--success); }
+    .stat-card.warning { border-left-color: var(--warning); }
+    .stat-card.info { border-left-color: var(--info); }
+    
+    .stat-icon {
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-size: 1.5rem;
+    }
+    
+    .activity-item {
+      position: relative;
+      padding-left: 2rem;
+      margin-bottom: 1.5rem;
+      border-left: 2px solid #e9ecef;
+    }
+    .activity-item:last-child {
+      margin-bottom: 0;
+      border-left: 2px solid transparent;
+    }
+    .activity-item::before {
+      content: '';
+      position: absolute;
+      left: -7px;
+      top: 0;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--primary);
+      border: 2px solid white;
+    }
+    
+    .quick-action-btn {
+      transition: all 0.2s;
+      margin-bottom: 0.75rem;
+    }
+    .quick-action-btn:hover {
+      transform: translateX(5px);
+    }
+    
+    .chart-container {
+      position: relative;
+      height: 300px;
+    }
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="d-flex flex-column h-100">
+      <!-- Sidebar Brand -->
+      <div class="sidebar-brand d-flex align-items-center justify-content-between p-3 mb-1">
+        <div class="d-flex align-items-center">
+          <i class="bi bi-speedometer2 me-2 fs-4"></i>
+          <span class="fs-5 fw-bold">Admin Dash</span>
+        </div>
+        <button class="btn btn-link text-white d-none d-lg-inline" id="sidebarToggle">
+          <i class="bi bi-chevron-double-left"></i>
+        </button>
+      </div>
+      
+      <!-- Sidebar Navigation -->
+      <ul class="nav nav-pills flex-column mb-auto px-2">
+        <li class="nav-item">
+          <a href="dashboard.html" class="nav-link active">
+            <i class="bi bi-speedometer2 me-2"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="users.html" class="nav-link text-white">
+            <i class="bi bi-people me-2"></i>
+            <span>Users</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="messages.html" class="nav-link text-white">
+            <i class="bi bi-envelope me-2"></i>
+            <span>Messages</span>
+            <span class="badge bg-primary rounded-pill float-end">3</span>
+          </a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link text-white dropdown-toggle" href="#" data-bs-toggle="dropdown">
+            <i class="bi bi-calendar me-2"></i>
+            <span>Calendar</span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark">
+            <li><a class="dropdown-item" href="#"><i class="bi bi-calendar-month me-2"></i>Month View</a></li>
+            <li><a class="dropdown-item" href="#"><i class="bi bi-calendar-week me-2"></i>Week View</a></li>
+            <li><a class="dropdown-item" href="#"><i class="bi bi-plus-circle me-2"></i>Add Event</a></li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link text-white dropdown-toggle" href="#" data-bs-toggle="dropdown">
+            <i class="bi bi-graph-up me-2"></i>
+            <span>Reports</span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark">
+            <li><a class="dropdown-item" href="#"><i class="bi bi-bar-chart me-2"></i>Sales</a></li>
+            <li><a class="dropdown-item" href="#"><i class="bi bi-activity me-2"></i>Activity</a></li>
+            <li><a class="dropdown-item" href="#"><i class="bi bi-server me-2"></i>System</a></li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a href="settings.html" class="nav-link text-white">
+            <i class="bi bi-gear me-2"></i>
+            <span>Settings</span>
+          </a>
+        </li>
+      </ul>
+      
+      <!-- Sidebar Footer -->
+      <div class="mt-auto p-3 border-top border-secondary">
+        <div class="d-flex align-items-center">
+          <img src="IMG-20220315-WA0078.jpg" alt="Profile" class="user-avatar me-2">
+          <div>
+            <div class="fw-bold">Ibrahim Alhajj</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Main Content -->
+  <div class="main-content" id="mainContent">
+    <!-- Top Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+      <div class="container-fluid">
+        <button class="btn btn-link d-lg-none" id="mobileSidebarToggle">
+          <i class="bi bi-list"></i>
+        </button>
+        
+        <div class="d-flex align-items-center ms-auto">
+          <div class="input-group ms-3 d-none d-lg-flex">
+            <input type="text" class="form-control" placeholder="Search...">
+            <button class="btn btn-outline-secondary" type="button">
+              <i class="bi bi-search"></i>
+            </button>
+          </div>
+          
+          <div class="dropdown ms-3">
+            <button class="btn btn-link text-dark dropdown-toggle" type="button" id="themeDropdown" data-bs-toggle="dropdown">
+              <i class="bi bi-moon-stars"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><button class="dropdown-item theme-item" data-theme="light"><i class="bi bi-sun me-2"></i>Light</button></li>
+              <li><button class="dropdown-item theme-item" data-theme="dark"><i class="bi bi-moon me-2"></i>Dark</button></li>
+              <li><button class="dropdown-item theme-item" data-theme="auto"><i class="bi bi-circle-half me-2"></i>Auto</button></li>
+            </ul>
+          </div>
+          
+          <div class="dropdown ms-3">
+            <button class="btn btn-link text-dark position-relative" type="button" id="notificationDropdown" data-bs-toggle="dropdown">
+              <i class="bi bi-bell"></i>
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                4
+              </span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end p-2" style="width: 300px;">
+              <li class="dropdown-header">Notifications</li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <a href="#" class="dropdown-item d-flex align-items-center py-2">
+                  <div class="me-3 bg-primary bg-opacity-10 p-2 rounded">
+                    <i class="bi bi-cart text-primary"></i>
+                  </div>
+                  <div>
+                    <div class="small">New order received</div>
+                    <small class="text-muted">2 mins ago</small>
+                  </div>
+                </a>
+              </li>
+              <!-- More notification items -->
+            </ul>
+          </div>
+          
+          <div class="dropdown ms-3">
+            <button class="btn btn-link text-dark dropdown-toggle d-flex align-items-center" type="button" id="profileDropdown" data-bs-toggle="dropdown">
+              <img src="IMG-20220315-WA0078.jpg" alt="Profile" class="user-avatar me-2">
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Profile</a></li>
+              <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i>Settings</a></li>
+              <li><a class="dropdown-item" href="#"><i class="bi bi-envelope me-2"></i>Messages</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+    
+    <!-- Page Content -->
+    <div class="container-fluid py-4">
+      <!-- Stats Cards Row -->
+      <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+          <div class="card stat-card primary h-100">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="text-uppercase text-muted mb-2">Total Users</h6>
+                  <h2 class="mb-0">2,548</h2>
+                  <small class="text-success">
+                    <i class="bi bi-arrow-up"></i> 12.5% since last month
+                  </small>
+                </div>
+                <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+                  <i class="bi bi-people-fill"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-4">
+          <div class="card stat-card success h-100">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="text-uppercase text-muted mb-2">Revenue</h6>
+                  <h2 class="mb-0">$24,813</h2>
+                  <small class="text-success">
+                    <i class="bi bi-arrow-up"></i> 8.2% since last month
+                  </small>
+                </div>
+                <div class="stat-icon bg-success bg-opacity-10 text-success">
+                  <i class="bi bi-currency-dollar"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-4">
+          <div class="card stat-card warning h-100">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="text-uppercase text-muted mb-2">Pending Tasks</h6>
+                  <h2 class="mb-0">17</h2>
+                  <small class="text-danger">
+                    <i class="bi bi-arrow-down"></i> 3.4% since last month
+                  </small>
+                </div>
+                <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+                  <i class="bi bi-list-task"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-4">
+          <div class="card stat-card info h-100">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="text-uppercase text-muted mb-2">Server Load</h6>
+                  <h2 class="mb-0">64%</h2>
+                  <small class="text-success">
+                    <i class="bi bi-arrow-down"></i> 5.1% since last month
+                  </small>
+                </div>
+                <div class="stat-icon bg-info bg-opacity-10 text-info">
+                  <i class="bi bi-server"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Charts & Activity Row -->
+      <div class="row">
+        <!-- Main Chart -->
+        <div class="col-lg-8 mb-4">
+          <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h6 class="card-title mb-0">Revenue Overview</h6>
+              <div class="dropdown">
+                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                  This Month
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li><button class="dropdown-item">Today</button></li>
+                  <li><button class="dropdown-item">This Week</button></li>
+                  <li><button class="dropdown-item active">This Month</button></li>
+                  <li><button class="dropdown-item">This Year</button></li>
+                </ul>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="chart-container">
+                <canvas id="revenueChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Recent Activity -->
+        <div class="col-lg-4 mb-4">
+          <div class="card h-100">
+            <div class="card-header">
+              <h6 class="card-title mb-0">Recent Activity</h6>
+            </div>
+            <div class="card-body">
+              <div class="activity-item">
+                <div class="d-flex justify-content-between">
+                  <strong>New user registered</strong>
+                  <small class="text-muted">2 mins ago</small>
+                </div>
+                <p class="mb-0">John Doe created an account</p>
+              </div>
+              
+              <div class="activity-item">
+                <div class="d-flex justify-content-between">
+                  <strong>Order completed</strong>
+                  <small class="text-muted">1 hour ago</small>
+                </div>
+                <p class="mb-0">Order #12345 was completed</p>
+              </div>
+              
+              <div class="activity-item">
+                <div class="d-flex justify-content-between">
+                  <strong>System updated</strong>
+                  <small class="text-muted">3 hours ago</small>
+                </div>
+                <p class="mb-0">v2.1.0 installed successfully</p>
+              </div>
+              
+              <div class="activity-item">
+                <div class="d-flex justify-content-between">
+                  <strong>New message</strong>
+                  <small class="text-muted">5 hours ago</small>
+                </div>
+                <p class="mb-0">You have 3 unread messages</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Quick Actions & Recent Users -->
+      <div class="row">
+        <!-- Quick Actions -->
+        <div class="col-lg-4 mb-4">
+          <div class="card h-100">
+            <div class="card-header">
+              <h6 class="card-title mb-0">Quick Actions</h6>
+            </div>
+            <div class="card-body">
+              <button class="btn btn-outline-primary w-100 quick-action-btn d-flex align-items-center">
+                <i class="bi bi-plus-circle me-2"></i>
+                <span>Add New User</span>
+              </button>
+              
+              <button class="btn btn-outline-success w-100 quick-action-btn d-flex align-items-center">
+                <i class="bi bi-envelope-plus me-2"></i>
+                <span>Send Message</span>
+              </button>
+              
+              <button class="btn btn-outline-info w-100 quick-action-btn d-flex align-items-center">
+                <i class="bi bi-file-earmark-text me-2"></i>
+                <span>Generate Report</span>
+              </button>
+              
+              <button class="btn btn-outline-warning w-100 quick-action-btn d-flex align-items-center">
+                <i class="bi bi-gear me-2"></i>
+                <span>System Settings</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Recent Users -->
+        <div class="col-lg-8 mb-4">
+          <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h6 class="card-title mb-0">Recent Users</h6>
+              <a href="users.html" class="btn btn-sm btn-outline-secondary">View All</a>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                  <thead>
+                    <tr>
+                      <th>User</th>
+                      <th>Email</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <img src="https://via.placeholder.com/40" alt="User" class="user-avatar me-3">
+                          <div>
+                            <div class="fw-bold">John Smith</div>
+                            <small class="text-muted">@johnsmith</small>
+                          </div>
+                        </div>
+                      </td>
+                      <td>john.smith@example.com</td>
+                      <td><span class="badge bg-success">Active</span></td>
+                      <td>
+                        <button class="btn btn-sm btn-outline-primary">
+                          <i class="bi bi-eye"></i>
+                        </button>
+                      </td>
+                    </tr>
+                    <!-- More user rows -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Custom JS -->
+  <script>
+    // Sidebar toggle
+    document.addEventListener('DOMContentLoaded', function() {
+      const sidebar = document.getElementById('sidebar');
+      const mainContent = document.getElementById('mainContent');
+      const sidebarToggle = document.getElementById('sidebarToggle');
+      const mobileSidebarToggle = document.getElementById('mobileSidebarToggle');
+      
+      // Desktop toggle
+      if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', function() {
+          sidebar.classList.toggle('sidebar-collapsed');
+          mainContent.classList.toggle('main-content-collapsed');
+          
+          const icon = this.querySelector('i');
+          if (sidebar.classList.contains('sidebar-collapsed')) {
+            icon.classList.remove('bi-chevron-double-left');
+            icon.classList.add('bi-chevron-double-right');
+          } else {
+            icon.classList.remove('bi-chevron-double-right');
+            icon.classList.add('bi-chevron-double-left');
+          }
+        });
+      }
+      
+      // Mobile toggle
+      if (mobileSidebarToggle) {
+        mobileSidebarToggle.addEventListener('click', function() {
+          sidebar.classList.toggle('d-none');
+        });
+      }
+      
+      // Theme switcher
+      const themeItems = document.querySelectorAll('.theme-item');
+      themeItems.forEach(item => {
+        item.addEventListener('click', function() {
+          const theme = this.getAttribute('data-theme');
+          document.documentElement.setAttribute('data-bs-theme', theme);
+          localStorage.setItem('theme', theme);
+        });
+      });
+      
+      // Load saved theme
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-bs-theme', savedTheme);
+      
+      // Revenue Chart
+      const ctx = document.getElementById('revenueChart');
+      if (ctx) {
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+              label: 'Revenue',
+              data: [12000, 19000, 15000, 18000, 22000, 24000],
+              borderColor: '#4361ee',
+              backgroundColor: 'rgba(67, 97, 238, 0.05)',
+              borderWidth: 2,
+              tension: 0.4,
+              fill: true
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: false
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                grid: {
+                  color: 'rgba(0, 0, 0, 0.05)'
+                }
+              },
+              x: {
+                grid: {
+                  display: false
+                }
+              }
+            }
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>
